@@ -7,6 +7,7 @@ En este repositorio incluye una serie de funciones para calcular la temperatura 
 ### Cálculo para equilibrio de calor en estado estable
 
 Para este caso se consideran constantes todos los parámetros ambientales y la corriente en el conductor, de los cuales depende la temperatura de equilibrio a la que llega en dichas condiciones, como se muestra en la siguiente ecuación:
+
 $$
     q_c + q_r = q_s + I^2 \, R(T_c)
 $$
@@ -29,38 +30,46 @@ La transferencia  de calor por convección de un cuerpo hacia un fluido  puede d
 
 ###### Convección forzada
 Se usan dos modelos para su cálculo: para velocidades bajas ($<50Km/h$) se implementa la ecuación 
+
 $$
     q_{c1} = K_{angle}\,(1.01 + 1.35 \, N_{Re}^{0.52})\, k_f \, (T_s - T_a)
 $$
+
 y para velocidades altas ($>50Km/h$) la ecuación 
+
 $$
     q_{c2} = K_{angle}\, 0.754 \, N_{Re}^{0.6}\, k_f \, (T_s - T_a)
 $$
 
-En cualquiera de los casos, las perdidas por convección forzada es función de la conductividad térmica del aire ($k_f$), la temperatura superficial del conductor ($T_s$), la temperatura en el ambiente ($T_a$), el factor de dirección del viento ($K_{angle}$) y el número de Reynolds ($N_{re}$). El factor de dirección del viento, a su vez, es un valor dependiente del ángulo que forma el eje axial del conductor y la dirección del viento ($\phi$) y su valor está definido por el modelo de la ecuación 
+En cualquiera de los casos, las perdidas por convección forzada es función de la conductividad térmica del aire ($k_f$), la temperatura superficial del conductor ($T_s$), la temperatura en el ambiente ($T_a$), el factor de dirección del viento ($K_{angle}$) y el número de Reynolds ($N_{re}$). El factor de dirección del viento, a su vez, es un valor dependiente del ángulo que forma el eje axial del conductor y la dirección del viento ($\phi$) y su valor está definido por el modelo de la ecuación
+
 $$
     K_{angle} = 1.194 - \cos{(\phi)} + 0.194\cos{(2\phi)} + 0.368\sin{(2\phi)}
 $$
 
 mientras que el número de Reynolds depende del diámetro externo del conductor ($D_0$), la densidad ($\rho_f$) y viscosidad dinámica ($\mu_f$) del aire y la velocidad del viento ($V_w$).
+
 $$
     N_{Re} = \frac{D_0\,\rho_f \, V_w}{\mu_f}
 $$
 
 ###### Convección natural
 Para lugares en donde la velocidad del viento es mínima, se aplica la relación de la siguiente ecuación para calcular las perdidas por convección natural.
+
 $$
     q_{cn} = 3.645 \, \rho_f^{0.5} \, D_0^{0.75} \, (T_s-T_a)^{1.25}
 $$
 
 ### Pérdidas de calor por radiación
 La transferencia de calor del conductor al ambiente depende en primer lugar de la diferencia de temperatura del conductor ($T_s$) y  la temperatura del ambiente ($T_a$). También depende del estado de limpieza de la superficie del conductor, que se representa mediante el factor de emisividad ($\epsilon$), y por supuesto del diámetro del conductor ($D_0$).
+
 $$
     q_r = 17.8 \, D_0 \, \epsilon \left[ \left(\frac{T_s + 273}{100}\right)^4 - \left(\frac{T_a + 273}{100}\right)^4 \right]
 $$
 
 ### Ganancia de calor por radiación solar
 La ganancia de energía en forma de calor proveniente de la radiación solar depende de un coeficiente de absorción solar ($\beta$), el ángulo efectivo de incidencia de los rayos solares ($\theta$), un factor de corrección ($Q_{se}$) y el área efectiva proyectada del conductor ($A'$).
+
 $$
     q_s = \beta \, Q_{se} \, \sin{(\theta)} \, A'
 $$
