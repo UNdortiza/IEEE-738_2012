@@ -101,7 +101,6 @@ def steady_state_conductor_temperature( I_ss, V_w, phi, epsilon, alpha, T_a, D_o
     '''
     # Solar heat gain
     q_s = solar_heat_gain( year, month, day, hour, H_e, lat, industrial_atmosphere, Z_l, D_o, alpha )
-    print('q_s = ', q_s)
     # Selección del cambio fraccionario para solución numérica por el método de la secante modificado
     delta = 0.1
     T_i = T_a + 5 # Temperatura de prueba
@@ -134,7 +133,6 @@ def steady_state_conductor_temperature( I_ss, V_w, phi, epsilon, alpha, T_a, D_o
         # Se evalúa si el error relativo es inferior al error tolerado para terminar las iteraciones
         if ea <= es or i >= imax :
             T_avg = T_i
-            print('Número de iteraciones: ', i)
             break
     return T_avg
 
@@ -711,3 +709,41 @@ def conductor_heat_capacity(m_i:list, C_pi:list):
     for mC in m_iC_pi :
         mC_p += mC[0] * mC[1]
     return mC_p
+
+def conductor_temperature_fault_current( T_0, t_f, I_f, R_0, mC_p, alpha_T):
+    '''
+    Calcula la temperatura en el conductor debida a una corriente de falla I_f, con un tiempo de despeje t_f, como un proceso adiabático.
+
+    Args:
+        T_0: temperatura inicial del conductor [°C]
+        t_f: tiempo de despeje de la falla [s]
+        I_f: Corriente de falla [Arms]
+        R_0: Resistividad del conductor a una temperatura inicial T_0 [Ω/m] 
+        mC_p: Capacidad calorífica total del conductor [J/(m-°C)]
+        alpha_T: coeficiente de variación relativa de la resistencia debido a la temperatura [1/°C]
+
+    Returns:
+        T: Temperatura del conductor en el instante en el que se despeja la falla [°C]
+    '''
+    T = T_0 + ( ( t_f * I_f**2 * R_0 ) / ( mC_p - t_f  * I_f**2 * R_0 * alpha_T ) )
+    return T
+
+# Utilities #
+
+def plot_transient_temperature( dt, time, T:list, minutes:bool = False ):
+    import matplotlib.pyplot as plt
+    from numpy import arange
+    
+    if minutes :
+        t = arange( 0, time / 60  , step= dt / 60 )
+        xL = 'Time [minutes]'
+    else :
+        t = arange( 0, time  , step=dt )
+        xL = 'Time [seconds]'
+
+    plt.grid(True)
+    plt.xlabel(xL)
+    plt.ylabel('Temperature [°C]')
+    plt.title('Transient temperature in the conductor')
+    
+    return plt.plot( t , T )
